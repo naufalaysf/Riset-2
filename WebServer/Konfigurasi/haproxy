@@ -1,0 +1,36 @@
+#update
+apt-get update
+sudo apt-get install -y software-properties-common apt-transport-https ca-certificates
+
+#dependecie
+apt-get install nano 
+
+#Haproxy
+apt-get install haproxy -y
+
+#configuration haproxy
+nano /etc/haproxy/haproxy.cfg
+
+listen stats 
+       bind :8080
+       stats enable
+       stats hide-version
+       stats realm Haproxy\ Statistics
+       stats uri /
+       stats auth naufalaysf:satu
+
+frontend www-http
+        mode http
+        bind *:80
+        option http-server-close
+        option forwardfor
+        default_backend web-server
+
+backend web-server
+        balance roundrobin
+        server webserver1 server_ip:80 check weight 4
+        server webserver2 server_ip:80 check weight 1
+
+#restart haproxy
+
+/etc/init.d/haproxy restart
